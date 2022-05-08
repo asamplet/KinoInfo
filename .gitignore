@@ -1,0 +1,25 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Project exclude paths
+/buildSrc/build/
+/features/home/build/
+/features/home/build/intermediates/javac/debug/classes/
+/features/movieDetails/build/
+/features/movieDetails/build/intermediates/javac/debug/classes/
+/Shared/Movie/data/build/
+/Shared/Movie/data/build/intermediates/javac/debug/classes/
+/Shared/Movie/domain/build/
