@@ -27,7 +27,7 @@ class HomeFragment : MvpAppCompatFragment(), HomeView {
 	@ProvidePresenter
 	fun provide(): HomePresenter = get()
 
-	private lateinit var adapter: MoviePageAdapter
+	private var adapter: MoviePageAdapter? = null
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -37,18 +37,27 @@ class HomeFragment : MvpAppCompatFragment(), HomeView {
 		_binding = FragmentHomeBinding.inflate(inflater, container, false)
 
 		adapter = MoviePageAdapter(presenter::changeGenre, presenter::navigateToDetails)
-		binding.movieRecyclerView.adapter = adapter
+		binding.content.adapter = adapter
+
+		binding.errorButton.setOnClickListener {
+			binding.progress.isVisible = true
+			binding.error.isVisible = false
+			presenter.loadData()
+		}
 
 		return binding.root
 	}
 
 	override fun setData(filmList: List<MovieInformation>, genresList: List<String>, genre: String?) {
-		binding.lupa.isVisible = false
-		val elements = listOf(
-			MovieContent.GenresTitle,
-		) +	genresList.map {
-			MovieContent.Genres(it, it == genre)
-		} + MovieContent.MovieTitle +
+		binding.progress.isVisible = false
+		binding.content.isVisible = true
+		binding.error.isVisible = false
+
+		val elements = listOf(MovieContent.GenresTitle) +
+			genresList.map {
+				MovieContent.Genres(it, it == genre)
+			} +
+			MovieContent.MovieTitle +
 			filmList.withIndex().groupBy {
 				it.index / 2
 			}.map {
@@ -57,11 +66,18 @@ class HomeFragment : MvpAppCompatFragment(), HomeView {
 				MovieContent.Information(it[0], it.getOrNull(1))
 			}
 
+		adapter?.submitList(elements)
+	}
 
-		adapter.submitList(elements)
+	override fun showError() {
+		binding.error.isVisible = true
+		binding.progress.isVisible = false
+		binding.content.isVisible = false
 	}
 
 	override fun onDestroyView() {
+		adapter = null
+		binding.content.adapter = null
 		_binding = null
 		super.onDestroyView()
 	}

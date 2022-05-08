@@ -6,6 +6,7 @@ import moxy.presenterScope
 import ru.kino.features.home.ui.HomeView
 import ru.kino.shared.movie.domain.entity.MovieInformation
 import ru.kino.shared.movie.domain.usecase.GetMovieUseCase
+import java.lang.Exception
 
 class HomePresenter(
 	private val getMovieUseCase: GetMovieUseCase,
@@ -19,11 +20,15 @@ class HomePresenter(
 	private var movies: List<MovieInformation> = emptyList()
 	private var genres = mutableListOf<String>()
 
-	private fun loadData() {
+	fun loadData() {
 		presenterScope.launch {
-			movies = getMovieUseCase()
-			getGenres(movies)
-			viewState.setData(movies.sortedBy { it.localizedName }, genres.distinct(), null)
+			try {
+				movies = getMovieUseCase()
+				getGenres(movies)
+				viewState.setData(movies.sortedBy { it.localizedName }, genres.distinct(), null)
+			} catch (e: Exception){
+				viewState.showError()
+			}
 		}
 	}
 

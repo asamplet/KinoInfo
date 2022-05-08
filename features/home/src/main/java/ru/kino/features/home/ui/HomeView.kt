@@ -10,4 +10,7 @@ interface HomeView : MvpView {
 
 	@AddToEndSingle
 	fun setData(filmList: List<MovieInformation>, genresList: List<String>, genre: String?)
+
+	@AddToEndSingle
+	fun showError()
 }
