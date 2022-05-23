@@ -36,6 +36,7 @@ dependencies {
 	implementation(Dependencies.PRESENTER)
 	implementation(Dependencies.PRESENTER_KTX)
 	implementation(Dependencies.GLIDE)
+	implementation(Dependencies.RECYCLER_VIEW)
 	kapt(Dependencies.PRESENTER_COMPILER)
 	annotationProcessor(Dependencies.GLIDE_COMPILER)
 

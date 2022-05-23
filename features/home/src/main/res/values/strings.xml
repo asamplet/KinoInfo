@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="genres">Жанры</string>
-	<string name="title">Фильмы</string>
+	<string name="movies">Фильмы</string>
 	<string name="error_text">Что-то пошло не так</string>
 	<string name="error_button">Повторить</string>
 	<string name="toolbar_title">Главная</string>

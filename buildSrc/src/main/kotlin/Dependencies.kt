@@ -16,6 +16,7 @@ object Dependencies {
 		const val RETROFIT = "2.9.0"
 		const val MOSHI = "1.13.0"
 		const val GLIDE = "4.13.0"
+		const val RECYCLER_VIEW = "1.2.0"
 	}
 
 	const val MOSHI = "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"
@@ -37,6 +38,7 @@ object Dependencies {
 	const val APP_COMPAT = "androidx.appcompat:appcompat:${Versions.APP_COMPAT}"
 	const val CICERONE = "com.github.terrakok:cicerone:${Versions.CICERONE}"
 	const val FRAGMENT = "androidx.fragment:fragment-ktx:${Versions.FRAGMENT}"
+	const val RECYCLER_VIEW = "androidx.recyclerview:recyclerview:${Versions.RECYCLER_VIEW}"
 
 	object Kotlin {
 

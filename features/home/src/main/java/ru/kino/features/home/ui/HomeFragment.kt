@@ -5,14 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.GridLayoutManager
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import org.koin.android.ext.android.get
+import ru.kino.features.home.R
 import ru.kino.features.home.databinding.FragmentHomeBinding
+import ru.kino.features.home.presentation.Genres
 import ru.kino.features.home.presentation.HomePresenter
-import ru.kino.features.home.presentation.MovieContent
+import ru.kino.features.home.ui.viewpager.GenresPageAdapter
 import ru.kino.features.home.ui.viewpager.MoviePageAdapter
+import ru.kino.features.home.ui.viewpager.TitleAdapter
 import ru.kino.shared.movie.domain.entity.MovieInformation
 
 class HomeFragment : MvpAppCompatFragment(), HomeView {
@@ -27,7 +32,9 @@ class HomeFragment : MvpAppCompatFragment(), HomeView {
 	@ProvidePresenter
 	fun provide(): HomePresenter = get()
 
-	private var adapter: MoviePageAdapter? = null
+	private var movieAdapter: MoviePageAdapter? = null
+	private var genreAdapter: GenresPageAdapter? = null
+	private var adapter: ConcatAdapter? = null
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -36,37 +43,49 @@ class HomeFragment : MvpAppCompatFragment(), HomeView {
 	): View {
 		_binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-		adapter = MoviePageAdapter(presenter::changeGenre, presenter::navigateToDetails)
+		val genresTitleAdapter = TitleAdapter(getString(R.string.genres))
+		genreAdapter = GenresPageAdapter(presenter::changeGenre)
+		val movieTitleAdapter = TitleAdapter(getString(R.string.movies))
+		movieAdapter = MoviePageAdapter(presenter::navigateToDetails)
+
+		adapter = ConcatAdapter(
+			ConcatAdapter.Config.Builder().setIsolateViewTypes(false).build(),
+			genresTitleAdapter,
+			genreAdapter,
+			movieTitleAdapter,
+			movieAdapter,
+		)
 		binding.content.adapter = adapter
 
-		binding.errorButton.setOnClickListener {
-			binding.progress.isVisible = true
-			binding.error.isVisible = false
-			presenter.loadData()
-		}
+		setupLayoutManager()
+		setErrorListener()
 
 		return binding.root
 	}
 
-	override fun setData(filmList: List<MovieInformation>, genresList: List<String>, genre: String?) {
-		binding.progress.isVisible = false
-		binding.content.isVisible = true
-		binding.error.isVisible = false
+	private fun setupLayoutManager(){
+		val layoutManager = GridLayoutManager(requireContext(), 2)
+		layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+			override fun getSpanSize(position: Int): Int =
+				when (adapter?.getItemViewType(position)) {
+					R.layout.movie_item -> 1
+					else                -> 2
+				}
+		}
+		binding.content.layoutManager = layoutManager
+	}
 
-		val elements = listOf(MovieContent.GenresTitle) +
-			genresList.map {
-				MovieContent.Genres(it, it == genre)
-			} +
-			MovieContent.MovieTitle +
-			filmList.withIndex().groupBy {
-				it.index / 2
-			}.map {
-				it.value.map { it.value }
-			}.map {
-				MovieContent.Information(it[0], it.getOrNull(1))
-			}
+	private fun setErrorListener(){
+		binding.errorButton.setOnClickListener {
+			binding.error.isVisible = false
+			binding.progress.isVisible = true
+			presenter.loadData()
+		}
+	}
 
-		adapter?.submitList(elements)
+	override fun setData(filmList: List<MovieInformation>, genresList: List<Genres>, genre: String?) {
+		genreAdapter?.submitList(genresList)
+		movieAdapter?.submitList(filmList)
 	}
 
 	override fun showError() {
@@ -75,8 +94,15 @@ class HomeFragment : MvpAppCompatFragment(), HomeView {
 		binding.content.isVisible = false
 	}
 
+	override fun hideLoading() {
+		binding.error.isVisible = false
+		binding.progress.isVisible = false
+		binding.content.isVisible = true
+	}
+
 	override fun onDestroyView() {
-		adapter = null
+		movieAdapter = null
+		genreAdapter = null
 		binding.content.adapter = null
 		_binding = null
 		super.onDestroyView()
