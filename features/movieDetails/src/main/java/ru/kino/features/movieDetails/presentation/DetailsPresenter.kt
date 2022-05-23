@@ -5,14 +5,16 @@ import ru.kino.features.movieDetails.ui.DetailsView
 import ru.kino.shared.movie.domain.entity.MovieInformation
 
 class DetailsPresenter(
+	private val data: MovieInformation,
 	private val router: DetailsRouter,
 ) : MvpPresenter<DetailsView>() {
 
-	fun navigateBack(){
-		router.navigateBack()
+	override fun onFirstViewAttach() {
+		super.onFirstViewAttach()
+		viewState.setData(data)
 	}
 
-	fun setMovie(movieInformation: MovieInformation){
-		viewState.setData(movieInformation)
+	fun navigateBack(){
+		router.navigateBack()
 	}
 }

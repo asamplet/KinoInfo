@@ -9,14 +9,14 @@ import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import moxy.presenter.ProvidePresenter
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 import ru.kino.features.moiveDetails.R
 import ru.kino.features.moiveDetails.databinding.FragmentDetailsBinding
 import ru.kino.features.movieDetails.presentation.DetailsPresenter
 import ru.kino.shared.movie.domain.entity.MovieInformation
 
 class DetailsFragment : MvpAppCompatFragment(), DetailsView {
-
-	private lateinit var movie: MovieInformation
 
 	companion object {
 
@@ -38,7 +38,7 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
 	lateinit var presenter: DetailsPresenter
 
 	@ProvidePresenter
-	fun provide(): DetailsPresenter = get()
+	fun provide(): DetailsPresenter = get {	parametersOf(arguments?.getSerializable(MOVIE))	}
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -46,11 +46,6 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
 		savedInstanceState: Bundle?
 	): View {
 		_binding = FragmentDetailsBinding.inflate(inflater, container, false)
-
-		arguments?.getSerializable(MOVIE).let {
-			movie = it as MovieInformation
-		}
-		presenter.setMovie(movie)
 
 		binding.includeToolbar.backButton.setOnClickListener {
 			presenter.navigateBack()
@@ -62,9 +57,9 @@ class DetailsFragment : MvpAppCompatFragment(), DetailsView {
 	override fun setData(movieInformation: MovieInformation) {
 		binding.includeToolbar.toolbarTitle.text = movieInformation.localizedName
 		binding.englishTitleText.text = movieInformation.name
-		binding.yearText.text = getString(R.string.year) + movieInformation.year
+		binding.yearText.text = getString(R.string.year, movieInformation.year)
 		binding.ratingText.text = movieInformation.rating?.let {
-			getString(R.string.rating) + it
+			getString(R.string.rating, it)
 		}
 		binding.descriptionText.text = movieInformation.description
 
