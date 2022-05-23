@@ -1,6 +1,7 @@
 plugins {
 	id(Plugins.ANDROID_APPLICATION)
 	id(Plugins.KOTLIN_ANDROID)
+	id(Plugins.KOTLIN_KAPT)
 }
 
 android {
@@ -39,6 +40,9 @@ dependencies {
 	implementation(Dependencies.Koin.KOIN_CORE)
 	implementation(Dependencies.Koin.KOIN_ANDROID)
 	implementation(Dependencies.CICERONE)
+	implementation(Dependencies.PRESENTER)
+	implementation(Dependencies.PRESENTER_KTX)
+	kapt(Dependencies.PRESENTER_COMPILER)
 
 	implementation(Dependencies.RETROFIT)
 	implementation(Dependencies.MOSHI)

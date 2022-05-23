@@ -1,16 +1,26 @@
 package com.example.kinoinfo.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.kinoinfo.R
+import com.example.kinoinfo.presentation.MainPresenter
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
+import moxy.MvpAppCompatActivity
+import moxy.presenter.InjectPresenter
+import moxy.presenter.ProvidePresenter
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : MvpAppCompatActivity(), MainView {
 
 	private val navigatorHolder: NavigatorHolder by inject()
 	private val navigator = AppNavigator(this, R.id.container)
+
+	@InjectPresenter
+	lateinit var presenter: MainPresenter
+
+	@ProvidePresenter
+	fun provide(): MainPresenter = get()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -20,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 	override fun onResume() {
 		super.onResume()
 		navigatorHolder.setNavigator(navigator)
+		presenter.newRoot()
 	}
 
 	override fun onPause() {

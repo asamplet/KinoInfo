@@ -1,5 +1,6 @@
 package com.example.kinoinfo.di
 
+import com.example.kinoinfo.presentation.MainPresenter
 import com.example.kinoinfo.ui.buildCicerone
 import com.example.kinoinfo.ui.getClient
 import com.example.kinoinfo.ui.provideMoshi
@@ -13,4 +14,10 @@ val appModule = module {
 	single { buildCicerone() }
 	single { get<Cicerone<Router>>().router }
 	single { get<Cicerone<Router>>().getNavigatorHolder() }
+
+	factory {
+		MainPresenter(
+			get(),
+		)
+	}
 }
